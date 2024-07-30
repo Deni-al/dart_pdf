@@ -57,10 +57,10 @@ class PrintingPlugin extends PrintingPlatform {
 
   bool get _hasPdfJsLib => web.window
       .callMethod<js.JSBoolean>(
-        'eval'.toJS,
-        'typeof pdfjsLib !== "undefined" && pdfjsLib.GlobalWorkerOptions.workerSrc != "";'
-            .toJS,
-      )
+    'eval'.toJS,
+    'typeof pdfjsLib !== "undefined" && pdfjsLib.GlobalWorkerOptions.workerSrc != "";'
+        .toJS,
+  )
       .toDart;
 
   /// The base URL for loading pdf.js library
@@ -98,11 +98,11 @@ class PrintingPlugin extends PrintingPlatform {
         _pdfJsUrlBase = web.window.getProperty(_dartPdfJsBaseUrl.toJS);
       } else {
         final pdfJsVersion =
-            web.window.hasProperty(_dartPdfJsVersion.toJS).toDart
-                ? web.window
-                    .getProperty<js.JSString?>(_dartPdfJsVersion.toJS)!
-                    .toDart
-                : _pdfJsVersion;
+        web.window.hasProperty(_dartPdfJsVersion.toJS).toDart
+            ? web.window
+            .getProperty<js.JSString?>(_dartPdfJsVersion.toJS)!
+            .toDart
+            : _pdfJsVersion;
         _pdfJsUrlBase = '$_pdfJsCdnPath@$pdfJsVersion/build/';
       }
 
@@ -123,9 +123,9 @@ class PrintingPlugin extends PrintingPlatform {
           .getProperty<js.JSObject>('pdfjsLib'.toJS)
           .getProperty<js.JSObject>('GlobalWorkerOptions'.toJS)
           .setProperty(
-            'workerSrc'.toJS,
-            '${_pdfJsUrlBase}pdf.worker.min.js'.toJS,
-          );
+        'workerSrc'.toJS,
+        '${_pdfJsUrlBase}pdf.worker.min.js'.toJS,
+      );
 
       // Restore module and exports
       if (module != null) {
@@ -151,15 +151,15 @@ class PrintingPlugin extends PrintingPlatform {
 
   @override
   Future<bool> layoutPdf(
-    Printer? printer,
-    LayoutCallback onLayout,
-    String name,
-    PdfPageFormat format,
-    bool dynamicLayout,
-    bool usePrinterSettings,
-    OutputType outputType,
-    bool forceCustomPrintPaper,
-  ) async {
+      Printer? printer,
+      LayoutCallback onLayout,
+      String name,
+      PdfPageFormat format,
+      bool dynamicLayout,
+      bool usePrinterSettings,
+      OutputType outputType,
+      bool forceCustomPrintPaper,
+      ) async {
     late Uint8List result;
     try {
       result = await onLayout(format);
@@ -213,8 +213,7 @@ class PrintingPlugin extends PrintingPlatform {
       script.setAttribute('id', _scriptId);
       script.setAttribute('type', 'text/javascript');
       script.innerHTML =
-          '''function ${_frameId}_print(){var f=document.getElementById('$_frameId');f.focus();f.contentWindow.print();}'''
-              .toJS;
+      '''function ${_frameId}_print(){var f=document.getElementById('$_frameId');f.focus();f.contentWindow.print();}''';
       doc.body!.append(script);
 
       final frame = doc.getElementById(_frameId) ?? doc.createElement('iframe');
@@ -277,13 +276,13 @@ class PrintingPlugin extends PrintingPlatform {
 
   @override
   Future<bool> sharePdf(
-    Uint8List bytes,
-    String filename,
-    Rect bounds,
-    String? subject,
-    String? body,
-    List<String>? emails,
-  ) async {
+      Uint8List bytes,
+      String filename,
+      Rect bounds,
+      String? subject,
+      String? body,
+      List<String>? emails,
+      ) async {
     return _getPdf(bytes, filename: filename);
   }
 
@@ -308,10 +307,10 @@ class PrintingPlugin extends PrintingPlatform {
 
   @override
   Future<Uint8List> convertHtml(
-    String html,
-    String? baseUrl,
-    PdfPageFormat format,
-  ) {
+      String html,
+      String? baseUrl,
+      PdfPageFormat format,
+      ) {
     throw UnimplementedError();
   }
 
@@ -322,17 +321,17 @@ class PrintingPlugin extends PrintingPlatform {
 
   @override
   Future<Printer> pickPrinter(
-    Rect bounds,
-  ) {
+      Rect bounds,
+      ) {
     throw UnimplementedError();
   }
 
   @override
   Stream<PdfRaster> raster(
-    Uint8List document,
-    List<int>? pages,
-    double dpi,
-  ) async* {
+      Uint8List document,
+      List<int>? pages,
+      double dpi,
+      ) async* {
     await _initPlugin();
 
     final settings = Settings()..data = document.toJS;
@@ -349,7 +348,7 @@ class PrintingPlugin extends PrintingPlatform {
       final numPages = doc.numPages;
 
       final canvas =
-          web.window.document.createElement('canvas') as web.HTMLCanvasElement;
+      web.window.document.createElement('canvas') as web.HTMLCanvasElement;
 
       final context = canvas.getContext('2d')! as web.CanvasRenderingContext2D;
       final computedPages =
@@ -359,7 +358,7 @@ class PrintingPlugin extends PrintingPlatform {
         final page = await doc.getPage(pageIndex + 1).toDart;
         try {
           final viewport =
-              page.getViewport(Settings()..scale = dpi / PdfPageFormat.inch);
+          page.getViewport(Settings()..scale = dpi / PdfPageFormat.inch);
 
           canvas.height = viewport.height.toInt();
           canvas.width = viewport.width.toInt();
@@ -375,7 +374,7 @@ class PrintingPlugin extends PrintingPlatform {
           final blobCompleter = Completer<web.Blob?>();
           canvas.toBlob(
             // ignore: unnecessary_lambdas
-            (web.Blob? blob) {
+                (web.Blob? blob) {
               blobCompleter.complete(blob);
             }.toJS,
           );
@@ -388,7 +387,7 @@ class PrintingPlugin extends PrintingPlatform {
           r.readAsArrayBuffer(blob);
 
           r.onLoadEnd.listen(
-            (web.ProgressEvent e) {
+                (web.ProgressEvent e) {
               data.add((r.result! as js.JSArrayBuffer).toDart.asInt8List());
               completer.complete();
             },
@@ -412,10 +411,10 @@ class PrintingPlugin extends PrintingPlatform {
 
 class _WebPdfRaster extends PdfRaster {
   _WebPdfRaster(
-    int width,
-    int height,
-    this.png,
-  ) : super(width, height, Uint8List(0));
+      int width,
+      int height,
+      this.png,
+      ) : super(width, height, Uint8List(0));
 
   final Uint8List png;
 
